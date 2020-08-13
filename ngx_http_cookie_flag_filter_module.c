@@ -282,13 +282,13 @@ ngx_http_cookie_flag_filter_append(ngx_http_request_t *r, ngx_http_cookie_t *coo
     }
 
     if (cookie->samesite_none == 1 && ngx_strcasestrn(header->value.data, "; SameSite=None", 15 - 1) == NULL) {
-        tmp.data = ngx_pnalloc(r->pool, header->value.len + sizeof("; SameSite=None") - 1);
+        tmp.data = ngx_pnalloc(r->pool, header->value.len + sizeof("; SameSite=None"));
         if (tmp.data == NULL) {
             return NGX_ERROR;
         }
-        tmp.len = ngx_sprintf(tmp.data, "%V; SameSite=None", &header->value) - tmp.data;
+        tmp.len = ngx_sprintf(tmp.data, "%V; SameSite=None%Z", &header->value) - tmp.data;
         header->value.data = tmp.data;
-        header->value.len = tmp.len;
+        header->value.len = tmp.len - 1;
     }
 
     if (cookie->samesite_strict == 1 && ngx_strcasestrn(header->value.data, "; SameSite=Strict", 17 - 1) == NULL) {
